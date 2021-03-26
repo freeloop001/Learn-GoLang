@@ -1,4 +1,5 @@
 // go run 1.go
+// 输出命令名称
 package main
 
 import (

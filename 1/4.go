@@ -1,4 +1,5 @@
 // go run 4.go file file ...
+// 输出有重复行文件的名称
 package main
 
 import (
