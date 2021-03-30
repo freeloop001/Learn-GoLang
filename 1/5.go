@@ -15,6 +15,9 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
+
+	//"strconv"
 	"time"
 )
 
@@ -33,7 +36,7 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	if len(os.Args) > 1 && os.Args[1] == "web" {
 		hander := func(w http.ResponseWriter, r *http.Request) {
-			lissajous(w)
+			lissajous(w, r)
 		}
 		http.HandleFunc("/", hander)
 		log.Fatal(http.ListenAndServe("localhost:8000", nil))
@@ -41,14 +44,21 @@ func main() {
 	}
 }
 
-func lissajous(out io.Writer) {
+func lissajous(out io.Writer, req *http.Request) {
 	const (
-		cycles  = 5     // 完整的x振荡器变化的个数
+		//cycles  = 5     // 完整的x振荡器变化的个数
 		res     = 0.001 // 角度分辨率
 		size    = 100   // 图像画布包含 [-size..+size]
 		nframes = 64    // 动画中的帧数
 		delay   = 8     // 以10ms为单位的帧间延迟
 	)
+
+	query := req.URL.Query()
+	cycles, err := strconv.ParseFloat(query.Get("cycles"), 64)
+	if err != nil {
+		cycles = 5
+	}
+
 	freq := rand.Float64() * 3.0 // y振荡器的相对频率
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0 // phase difference
